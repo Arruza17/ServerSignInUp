@@ -1,11 +1,11 @@
 package model;
 
-import com.sun.istack.internal.logging.Logger;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.LoginFoundException;
 
 import exceptions.ServerDownException;
+import exceptions.UserNotFoundException;
 import interfaces.Connectable;
 import java.sql.Connection;
 
@@ -14,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import model.User;
 
@@ -46,7 +48,6 @@ public class DAOImplementation implements Connectable {
     @Override
     public DataEncapsulator signIn(User user) throws ServerDownException {
         DataEncapsulator de = new DataEncapsulator();
-
         try {
             getConnection();
             ResultSet rs = null;
@@ -61,15 +62,26 @@ public class DAOImplementation implements Connectable {
                 user.setPrivilege(UserPrivilege.values()[rs.getInt("privilege")]);
                 user.setStatus(UserStatus.values()[rs.getInt("status")]);
                 user.setLastPasswordChange(rs.getTimestamp("lastPasswordChange"));
-
+            } else {
+                user = null;
             }
             stmt.close();
             releaseConnection();
-        } catch (SQLException e) {
-            throw new ServerDownException(e.getMessage());
+            if (user == null) {
+                throw new UserNotFoundException();
+            }
+
+        } catch (UserNotFoundException ex) {
+            de.setException(ex);
+            throw new ServerDownException(ex.getMessage());
+        } catch (SQLException ex) {
+            de.setException(ex);
+            throw new ServerDownException(ex.getMessage());
+
+        } finally {
+            de.setUser(user);
+            return de;
         }
-        de.setUser(user);
-        return de;
     }
 
     @Override
@@ -114,7 +126,5 @@ public class DAOImplementation implements Connectable {
         }
 
     }
-
-   
 
 }

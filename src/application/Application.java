@@ -21,10 +21,12 @@ import model.DataEncapsulator;
  */
 public class Application {
 
-    private static final int PORT = 5000;
+    
+    
+    private static final ResourceBundle CONFIGFILE = ResourceBundle.getBundle("resources.config");
+    private static final int PORT = Integer.parseInt(CONFIGFILE.getString("PORT"));
     private static ArrayList<ConnectionThread> receiveClients = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
-    private static final ResourceBundle CONFIGFILE = ResourceBundle.getBundle("resources.config");
     private static final int MAX_USERS = Integer.parseInt(CONFIGFILE.getString("MaxUsers"));
 
     /**
@@ -47,16 +49,25 @@ public class Application {
 
                 } else {
                     clientSocket = serverSocket.accept();
-                    ConnectionThread receive = new ConnectionThread(clientSocket, ConnectableFactory.getConnectable());                 
+                    ConnectionThread receive = new ConnectionThread(clientSocket, ConnectableFactory.getConnectable());
+                    addClient(receive);
                     System.out.println("Client #" + receiveClients.size());
-                    receiveClients.add(receive);
-     
+
                 }
 
             }
         } catch (IOException ex) {
             System.err.println(new Exception("This address is already in use, try again later"));
         }
+    }
+
+    private static synchronized void addClient(ConnectionThread receive) {
+        receiveClients.add(receive);
+    }
+
+    public static synchronized void removeClient(ConnectionThread client) {
+        receiveClients.remove(client);
+        System.out.println("Client disconnected");
     }
 
 }

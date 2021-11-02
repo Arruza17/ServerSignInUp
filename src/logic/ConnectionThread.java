@@ -1,5 +1,6 @@
 package logic;
 
+import application.Application;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.LoginFoundException;
@@ -20,6 +21,8 @@ import model.User;
  */
 public class ConnectionThread extends Thread {
 
+    
+    
     private Socket clientSocket;
     private Connectable dataReceiver;
 
@@ -36,29 +39,31 @@ public class ConnectionThread extends Thread {
             oos = new ObjectOutputStream(clientSocket.getOutputStream());
             ois = new ObjectInputStream(clientSocket.getInputStream());
 
-            while (true) {
-                DataEncapsulator de = (DataEncapsulator) ois.readObject();
-                if (de.getUser() == null) {
-                    de.setException(new Exception("CLOSE"));
-                    oos.writeObject(de);
-                    oos.close();
-                    ois.close();
-                    clientSocket.close();
-                    this.interrupt();
+            DataEncapsulator de = (DataEncapsulator) ois.readObject();
+            if (de.getUser() == null) {
+                de.setException(new Exception("CLOSE"));
+                oos.writeObject(de);
+                oos.close();
+                ois.close();
+                clientSocket.close();
+                this.interrupt();
+                Application.removeClient(this);
+
+            } else {
+                User user = de.getUser();
+                if (user.getLogin() != null && user.getPassword() != null && user.getEmail() == null) {
+                    System.out.println(user.getLogin() + user.getPassword());
+                    DataEncapsulator dataSender;
+                    dataSender = dataReceiver.signIn(user);
+                    oos.writeObject(dataSender);
                 } else {
-                    User user = de.getUser();
-                    if (user.getLogin() != null && user.getPassword() != null && user.getEmail() == null) {
-                        System.out.println(user.getLogin() + user.getPassword());
-                        de = dataReceiver.signIn(user);
-                        oos.writeObject(de);
-                    } else {
-                        dataReceiver.signUp(user);
-                        de.setUser(user);
-                        de.setException(new Exception("OK"));
-                        oos.writeObject(de);
-                    }
+                    dataReceiver.signUp(user);
+                    de.setUser(user);
+                    de.setException(new Exception("OK"));
+                    oos.writeObject(de);
                 }
             }
+
         } catch (IOException ex) {
             Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
