@@ -14,8 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import model.User;
 
@@ -30,7 +28,7 @@ public class DAOImplementation implements Connectable {
     private PreparedStatement stmt;
 
     final String SIGN_UP = "insert into user values(null, ?,?, ?, ?, ?, ?, now())";
-    final String SIGN_IN = "Select * from user where login = ?";
+    final String SIGN_IN = "Select * from user where login = ? and password=?";
 
     private DAOImplementation() {
         pool = Pool.getPool();
@@ -53,6 +51,7 @@ public class DAOImplementation implements Connectable {
             ResultSet rs = null;
             stmt = con.prepareStatement(SIGN_IN);
             stmt.setString(1, user.getLogin());
+            stmt.setString(2, user.getPassword());
             rs = stmt.executeQuery();
             if (rs.next()) {
                 user.setId(rs.getInt("id"));
@@ -79,6 +78,9 @@ public class DAOImplementation implements Connectable {
             throw new ServerDownException(ex.getMessage());
 
         } finally {
+            if (de.getException() == null) {
+                de.setException(new Exception("OK"));
+            }
             de.setUser(user);
             return de;
         }

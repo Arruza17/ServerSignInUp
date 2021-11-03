@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 import logic.ConnectableFactory;
 import logic.ConnectionThread;
 
@@ -21,8 +22,6 @@ import model.DataEncapsulator;
  */
 public class Application {
 
-    
-    
     private static final ResourceBundle CONFIGFILE = ResourceBundle.getBundle("resources.config");
     private static final int PORT = Integer.parseInt(CONFIGFILE.getString("PORT"));
     private static ArrayList<ConnectionThread> receiveClients = new ArrayList<>();
@@ -54,6 +53,8 @@ public class Application {
                     System.out.println("Client #" + receiveClients.size());
 
                 }
+
+             
 
             }
         } catch (IOException ex) {
