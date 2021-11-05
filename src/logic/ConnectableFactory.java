@@ -9,6 +9,10 @@ import model.DAOImplementation;
  */
 public class ConnectableFactory {
 
+    /**
+     *  Method that returns an instance of the Connectable implementation
+     * @return conn the implementation itself
+     */
     public static Connectable getConnectable() {
         Connectable conn = null;
         

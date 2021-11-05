@@ -18,10 +18,10 @@ public class BDConnection {
     private final String dbPass;
 
     /**
-     *
+     * BDConnection constructor where it receives all the data from resources.config file
      */
     public BDConnection() {
-
+       
         configFile = ResourceBundle.getBundle("resources.config");
         conn = configFile.getString("Conn");
         dbUser = configFile.getString("DBUser");
@@ -29,8 +29,8 @@ public class BDConnection {
     }
 
     /**
-     *
-     * @return
+     *  Method that opens a connection to the database
+     * @return con the connection object
      */
     public Connection openConnection() {
 
@@ -46,9 +46,9 @@ public class BDConnection {
     }
 
     /**
-     *
-     * @param stmt
-     * @param con
+     * Method that closes the connection and the statements
+     * @param stmt the prepared statement 
+     * @param con the connection
      * @throws SQLException
      */
     public void closeConnection(PreparedStatement stmt, Connection con) throws SQLException {
