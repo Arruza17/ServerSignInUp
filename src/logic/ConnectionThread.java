@@ -1,8 +1,7 @@
 package logic;
 
-import application.Application;
-import enumerations.UserPrivilege;
-import enumerations.UserStatus;
+import application.Server;
+
 import exceptions.LoginFoundException;
 import exceptions.ServerDownException;
 import interfaces.Connectable;
@@ -13,7 +12,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DataEncapsulator;
-import model.Pool;
+
 import model.User;
 
 /**
@@ -22,8 +21,10 @@ import model.User;
  */
 public class ConnectionThread extends Thread {
 
-    private Socket clientSocket;
+    private static Socket clientSocket;
     private Connectable dataReceiver;
+    private static ObjectOutputStream oos = null;
+    private static ObjectInputStream ois = null;
 
     /**
      * Thread that starts the communication between client and server
@@ -42,8 +43,8 @@ public class ConnectionThread extends Thread {
      * sends them back the results
      */
     public void run() {
-        ObjectOutputStream oos = null;
-        ObjectInputStream ois = null;
+        oos = null;
+        ois = null;
         try {
             //We open the receival and sendal of data
             oos = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -55,24 +56,24 @@ public class ConnectionThread extends Thread {
             User user = de.getUser();
             //If they only have user and password, its a login
             if (user.getLogin() != null && user.getPassword() != null && user.getEmail() == null) {
-                
+
                 DataEncapsulator dataSender;
                 //We sign in the user and send back all the data
-                dataSender = dataReceiver.signIn(user);           
+                dataSender = dataReceiver.signIn(user);
                 oos.writeObject(dataSender);
                 oos.flush();
                 //We disconnect the client
-                Application.removeClient(this);
-            //If they have all the data is a register
+                Server.removeClient(this);
+                //If they have all the data is a register
             } else {
                 //We sign up a user
                 dataReceiver.signUp(user);
                 de.setUser(user);
                 //Send them the confirmation message
-                de.setException(new Exception("OK"));             
+                de.setException(new Exception("OK"));
                 oos.writeObject(de);
                 oos.flush();
-                Application.removeClient(this);
+                Server.removeClient(this);
             }
         } catch (IOException ex) {
             Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -84,6 +85,19 @@ public class ConnectionThread extends Thread {
             Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public static void close() throws IOException {
+        if (!clientSocket.isClosed()) {
+            if (ois != null) {
+                ois.close();
+            }
+            if (oos != null) {
+                oos.close();
+            }
+            clientSocket.close();
+
+        }
     }
 
 }

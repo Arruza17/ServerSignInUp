@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Stack;
 
 /**
@@ -34,7 +35,7 @@ public class Pool {
      *
      * @param con the connection to be saved
      */
-    public void returnConnection(Connection con) {
+    public static void returnConnection(Connection con) {
         connections.push(con);
     }
 
@@ -43,7 +44,7 @@ public class Pool {
      *
      * @return con the connection to be returned
      */
-    public Connection getConnection() {
+    public static Connection getConnection() {
         Connection con = (Connection) connections.pop();
         return con;
     }
@@ -57,5 +58,11 @@ public class Pool {
     }
 
    
+     public static void closePool() throws SQLException {
+         for (int i = 0; i < connections.size(); i++) {
+             Connection con = getConnection();
+             con.close();
+         }
+    }
 
 }
