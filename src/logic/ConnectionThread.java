@@ -43,6 +43,7 @@ public class ConnectionThread extends Thread {
      * sends them back the results
      */
     public void run() {
+        DataEncapsulator de = new DataEncapsulator();
         oos = null;
         ois = null;
         try {
@@ -51,7 +52,7 @@ public class ConnectionThread extends Thread {
             ois = new ObjectInputStream(clientSocket.getInputStream());
 
             //We read the petition
-            DataEncapsulator de = (DataEncapsulator) ois.readObject();
+            de = (DataEncapsulator) ois.readObject();
 
             User user = de.getUser();
             //If they only have user and password, its a login
@@ -80,9 +81,23 @@ public class ConnectionThread extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ServerDownException ex) {
-            Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                de.setException(ex);
+                oos.writeObject(de);
+                oos.flush();
+                Server.removeClient(this);
+            } catch (IOException ex1) {
+                Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         } catch (LoginFoundException ex) {
-            Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                de.setException(ex);
+                oos.writeObject(de);
+                oos.flush();
+                Server.removeClient(this);
+            } catch (IOException ex1) {
+                Logger.getLogger(ConnectionThread.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
 
     }

@@ -113,6 +113,12 @@ public class Server extends Thread {
         Server.serverOn = serverOn;
     }
 
+    
+    /**
+     * Method that is used to close the whole server (connections and threads included)
+     * @throws SQLException
+     * @throws IOException 
+     */
     public static void closeServer() throws SQLException, IOException {
         if (receiveClients.size() > 0) {
             Pool pool = Pool.getPool();
