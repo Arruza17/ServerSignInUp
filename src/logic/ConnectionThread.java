@@ -102,6 +102,11 @@ public class ConnectionThread extends Thread {
 
     }
 
+    
+    /**
+     * Method used to close all the Object Input and Output streams as well as the sockets
+     * @throws IOException If there is any Exception during execution.
+     */
     public static void close() throws IOException {
         if (!clientSocket.isClosed()) {
             if (ois != null) {

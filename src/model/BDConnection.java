@@ -49,7 +49,7 @@ public class BDConnection {
      * Method that closes the connection and the statements
      * @param stmt the prepared statement 
      * @param con the connection
-     * @throws SQLException
+     * @throws SQLException If there is any Exception during execution.
      */
     public void closeConnection(PreparedStatement stmt, Connection con) throws SQLException {
 
