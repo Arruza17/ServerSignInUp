@@ -193,12 +193,7 @@ public class DAOImplementation implements Connectable {
                 stmt.setInt(1, user.getId());
                 stmt.executeUpdate();
             }
-        } else {
-            //Insert if they do not have any sign ins yet
-            stmt = con.prepareStatement(INSERT_LAST_SIGN_INS);
-            stmt.setInt(1, user.getId());
-            stmt.executeUpdate();
-        }
+        } 
 
     }
 
@@ -221,15 +216,6 @@ public class DAOImplementation implements Connectable {
 
     }
 
-    public void closePool() {
-        for (int i = 0; i < pool.getConnections(); i++) {
-            Connection con = pool.getConnection();
-            try {
-                bdc.closeConnection(null, con);
-            } catch (SQLException ex) {
-                Logger.getLogger(DAOImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+   
 
 }
