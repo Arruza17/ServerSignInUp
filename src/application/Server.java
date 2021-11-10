@@ -50,8 +50,7 @@ public class Server extends Thread {
             Socket clientSocket;
             //Read petitions
             while (serverOn) {
-                //We accept the petition 
-               
+                //We accept the petition              
                 if (!serverSocket.isClosed()) {
                     //If the last user is more than the maximum, send message if (serverSocket.isClosed()) {
                     if (receiveClients.size() > MAX_USERS) {

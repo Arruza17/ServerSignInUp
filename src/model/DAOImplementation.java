@@ -58,7 +58,7 @@ public class DAOImplementation implements Connectable {
     /**
      * Method that returns the implementation
      *
-     * @return
+     * @return dao the dao implementation
      */
     public static DAOImplementation getDAO() {
         if (dao == null) {
@@ -71,8 +71,8 @@ public class DAOImplementation implements Connectable {
      * Method that allows a user to be signed in
      *
      * @param user the user to sing in
-     * @return de the object used to transfer data between client and server
-     * @throws ServerDownException
+     * @return de The object used to transfer data between client and server
+     * @throws ServerDownException If there is any Exception during execution.
      */
     @Override
     public DataEncapsulator signIn(User user) throws ServerDownException {
@@ -125,9 +125,9 @@ public class DAOImplementation implements Connectable {
     /**
      * Method that allows a user to be SignedUp
      *
-     * @param user the user to SignUp
-     * @throws ServerDownException
-     * @throws LoginFoundException
+     * @param user The user to SignUp
+     * @throws ServerDownException If there is any Exception during execution.
+     * @throws LoginFoundException If the login can be found in the database
      */
     @Override
     public void signUp(User user) throws ServerDownException, LoginFoundException {
@@ -164,8 +164,8 @@ public class DAOImplementation implements Connectable {
      * Method that updates the oldest sign in to the newest one
      *
      * @param user the user to change the sign in
-     * @param rs
-     * @throws SQLException
+     * @param rs the resultset with the bbdd data
+     * @throws SQLException If there is any Exception during execution.
      */
     private void updateSignIns(User user, ResultSet rs) throws SQLException {
         int cant = 0;
@@ -193,12 +193,7 @@ public class DAOImplementation implements Connectable {
                 stmt.setInt(1, user.getId());
                 stmt.executeUpdate();
             }
-        } else {
-            //Insert if they do not have any sign ins yet
-            stmt = con.prepareStatement(INSERT_LAST_SIGN_INS);
-            stmt.setInt(1, user.getId());
-            stmt.executeUpdate();
-        }
+        } 
 
     }
 
@@ -221,15 +216,6 @@ public class DAOImplementation implements Connectable {
 
     }
 
-    public void closePool() {
-        for (int i = 0; i < pool.getConnections(); i++) {
-            Connection con = pool.getConnection();
-            try {
-                bdc.closeConnection(null, con);
-            } catch (SQLException ex) {
-                Logger.getLogger(DAOImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+   
 
 }

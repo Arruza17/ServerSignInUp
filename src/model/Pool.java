@@ -21,7 +21,7 @@ public class Pool {
     /**
      * Method that gets a Pool
      *
-     * @return
+     * @return Pool the connection pool
      */
     public static Pool getPool() {
         if (pool == null) {

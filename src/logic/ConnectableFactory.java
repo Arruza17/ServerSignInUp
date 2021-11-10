@@ -4,7 +4,8 @@ import interfaces.Connectable;
 import model.DAOImplementation;
 
 /**
- *
+ * Factory of the connectable factory
+ * 
  * @author Yeray Sampedro
  */
 public class ConnectableFactory {
