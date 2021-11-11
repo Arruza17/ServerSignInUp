@@ -57,8 +57,11 @@ public class Pool {
         return connections.size();
     }
 
-   
-     public static void closePool() throws SQLException {
+    /**
+     * This method is used to close the Pool
+     * @throws SQLException if any SQLException is thrown
+     */
+    public static void closePool() throws SQLException {
          for (int i = 0; i < connections.size(); i++) {
              Connection con = getConnection();
              con.close();

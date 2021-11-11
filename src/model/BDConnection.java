@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
- *
+ * This class contains the BDConnection method used to connect to the database
  * @author Adrián Perez
  */
 public class BDConnection {

@@ -40,7 +40,6 @@ public class Server extends Thread {
     /**
      * Method use to start the server
      *
-     * @param args the command line arguments
      */
     public void run() {
         try {
@@ -106,7 +105,7 @@ public class Server extends Thread {
     /**
      * Method that enables or disables the server
      *
-     * @param serverOn
+     * @param serverOn boolean true if the user is on
      */
     public static void setServerOn(boolean serverOn) {
         Server.serverOn = serverOn;
@@ -115,8 +114,8 @@ public class Server extends Thread {
     
     /**
      * Method that is used to close the whole server (connections and threads included)
-     * @throws SQLException
-     * @throws IOException 
+     * @throws SQLException if any SQL exception is thrown
+     * @throws IOException if any IO exception is thrown
      */
     public static void closeServer() throws SQLException, IOException {
         if (receiveClients.size() > 0) {

@@ -16,7 +16,7 @@ import model.DataEncapsulator;
 import model.User;
 
 /**
- *
+ * The Thread that controls the connection with the server
  * @author Yeray Sampedro
  */
 public class ConnectionThread extends Thread {

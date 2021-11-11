@@ -16,6 +16,10 @@ public class Application extends Thread {
 
     private static boolean cont = true;
 
+    /**
+     * Method that runs the server
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         Server server = new Server();
         server.start();
