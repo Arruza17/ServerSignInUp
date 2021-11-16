@@ -1,13 +1,17 @@
 package model;
 
+import exceptions.ServerDownException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class contains the BDConnection method used to connect to the database
+ *
  * @author Adrián Perez
  */
 public class BDConnection {
@@ -18,10 +22,11 @@ public class BDConnection {
     private final String dbPass;
 
     /**
-     * BDConnection constructor where it receives all the data from resources.config file
+     * BDConnection constructor where it receives all the data from
+     * resources.config file
      */
     public BDConnection() {
-       
+
         configFile = ResourceBundle.getBundle("resources.config");
         conn = configFile.getString("Conn");
         dbUser = configFile.getString("DBUser");
@@ -29,25 +34,30 @@ public class BDConnection {
     }
 
     /**
-     *  Method that opens a connection to the database
+     * Method that opens a connection to the database
+     *
      * @return con the connection object
      */
-    public Connection openConnection() {
+    public Connection openConnection() throws ServerDownException {
 
         Connection con = null;
 
         try {
             con = DriverManager.getConnection(conn, dbUser, dbPass);
-
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            if (con == null) {
+                throw new ServerDownException("Error with the connection of the database");
+            }
 
         }
+
         return con;
     }
 
     /**
      * Method that closes the connection and the statements
-     * @param stmt the prepared statement 
+     *
+     * @param stmt the prepared statement
      * @param con the connection
      * @throws SQLException If there is any Exception during execution.
      */

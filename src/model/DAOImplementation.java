@@ -106,13 +106,9 @@ public class DAOImplementation implements Connectable {
                 throw new UserNotFoundException();
             }
 
-        } catch (UserNotFoundException ex) {
+        } catch (UserNotFoundException | ServerDownException ex) {
             de.setException(ex);
             throw new ServerDownException(ex.getMessage());
-        } catch (SQLException ex) {
-            de.setException(ex);
-            throw new ServerDownException(ex.getMessage());
-
         } finally {
             if (de.getException() == null) {
                 de.setException(new Exception("OK"));
@@ -193,7 +189,7 @@ public class DAOImplementation implements Connectable {
                 stmt.setInt(1, user.getId());
                 stmt.executeUpdate();
             }
-        } 
+        }
 
     }
 
@@ -207,7 +203,7 @@ public class DAOImplementation implements Connectable {
     /**
      * Method that gets a connection form the pool
      */
-    public void getConnection() {
+    public void getConnection() throws SQLException, ServerDownException {
         if (pool.getConnections() < MAX_USERS) {
             con = bdc.openConnection();
         } else {
@@ -215,7 +211,5 @@ public class DAOImplementation implements Connectable {
         }
 
     }
-
-   
 
 }
